@@ -1,6 +1,11 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/OSbSZWub)
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=16353506&assignment_repo_type=AssignmentRepo)
 # Mint ARC3 NFTs
+### Student Information
+- Email: g240001@e.ntu.edu.sg
+- Name: Ngo Quoc Bao
+- Student ID: G2404379H
+
 In this assessment, you are required to create a Dapp that allows users to mint their own NFT by paying a fee with your token:
 
 ### Part 1: Create and transfer fungible tokens
