@@ -2,6 +2,7 @@ import { useWallet } from "@txnlab/use-wallet";
 import { useState } from "react";
 import { getAlgodClient } from "../clients";
 import Button from "./Button";
+import axios from "axios";
 
 const network = process.env.NEXT_PUBLIC_NETWORK || "SandNet";
 const algod = getAlgodClient(network);
@@ -34,6 +35,20 @@ export default function TransferNFTForm() {
     console.log(assetName, desc, assetFile);
 
     // write your code here to mint NFT
+
+    // Convert file to base64 before upload
+    let reader = new FileReader();
+    reader.readAsDataURL(assetFile);
+    reader.onload = async function () {
+      const res = await axios.post("/api/upload", {
+        asset: {
+          name: assetName,
+          description: desc,
+        },
+        image: reader.result
+      });
+      console.log(res);
+    };
   };
 
   return (
