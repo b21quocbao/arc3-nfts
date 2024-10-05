@@ -55,6 +55,7 @@ export default function DropdownMenu() {
                                                             onChange={(e) => {
                                                                 provider.setActiveAccount(e.target.value);
                                                             }}
+                                                            className="text-black"
                                                         >
                                                             {provider.accounts.map((account) => (
                                                                 <option key={account.address} value={account.address}>

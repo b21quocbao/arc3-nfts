@@ -50,13 +50,13 @@ export default function TransferNFTForm() {
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="asset-name">
             Asset Name:
           </label>
-          <input type="text" id="asset-name" className="w-full" required />
+          <input type="text" id="asset-name" className="w-full text-black" required />
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
             Description:
           </label>
-          <textarea id="description" className="w-full" required></textarea>
+          <textarea id="description" className="w-full text-black" required></textarea>
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
