@@ -9,6 +9,9 @@ const algodClient = getAlgodClient(network);
 // get creator account
 const deployer = algosdk.mnemonicToSecretKey(process.env.NEXT_PUBLIC_DEPLOYER_MNEMONIC);
 
+// get buyer account
+const buyer = algosdk.mnemonicToSecretKey(process.env.NEXT_PUBLIC_BUYER_MNEMONIC);
+
 const submitToNetwork = async (signedTxn) => {
   // send txn
   let tx = await algodClient.sendRawTransaction(signedTxn).do();
@@ -51,4 +54,30 @@ const submitToNetwork = async (signedTxn) => {
   // Get asset index returned from tx
   const assetIndex = result['asset-index'];
   console.log(`Asset ID created: ${assetIndex}`);
+
+  // buyer opt-in receiving asset
+  // https://developer.algorand.org/docs/get-details/asa/#receiving-an-asset
+  const optInTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+    from: buyer.addr,
+    to: buyer.addr,
+    suggestedParams,
+    assetIndex,
+    amount: 0,
+  });
+
+  const signedOptInTxn = optInTxn.signTxn(buyer.sk);
+  await submitToNetwork(signedOptInTxn);
+
+  // Transfer 100 fungible tokens to buyer account
+  // https://developer.algorand.org/docs/get-details/asa/#transferring-an-asset
+  const xferTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+    from: deployer.addr,
+    to: buyer.addr,
+    suggestedParams,
+    assetIndex,
+    amount: 100,
+  });
+  
+  const signedXferTxn = xferTxn.signTxn(deployer.sk);
+  await submitToNetwork(signedXferTxn);
 })();
