@@ -9,7 +9,10 @@ const pinata = pinataSDK(process.env.PINATA_API_KEY, process.env.PINATA_API_SECR
 export default async function handler(req, res) {
   const { asset, image } = req.body;
   // convert image base64 to buffer
-  const buffer = Buffer.from(image.split(',')[1], "base64")
+  const buffer = Buffer.from(image.split(',')[1], "base64");
+  const mimeType = image.split(';')[0].split(":")[1];
+
+  console.log("Mimetype: ", mimeType);
 
   // pin content directory
   const folderOptions = {
@@ -22,8 +25,8 @@ export default async function handler(req, res) {
   };
 
   // create readstream from buffer
-  await writeFile("image.jpeg", buffer)
-  const result = await pinata.pinFileToIPFS(createReadStream("image.jpeg"), folderOptions);
+  await writeFile("image", buffer)
+  const result = await pinata.pinFileToIPFS(createReadStream("image"), folderOptions);
   console.log("Digital content pinned: ", result);
 
   // pin metadata
@@ -39,11 +42,11 @@ export default async function handler(req, res) {
   const metadata = {
     name: asset.name,
     description: asset.description,
-    image: `ipfs://${result.IpfsHash}/image.jpeg`, // update url here for windows users
-    image_mimetype: "image/jpeg",
+    image: `ipfs://${result.IpfsHash}/image`, // update url here for windows users
+    image_mimetype: mimeType,
     properties: {
-      file_url: `https://gateway.pinata.cloud/ipfs/${result.IpfsHash}/image.jpeg`, // update url here for windows users
-      file_url_mimetype: "image/jpeg",
+      file_url: `https://gateway.pinata.cloud/ipfs/${result.IpfsHash}/image`, // update url here for windows users
+      file_url_mimetype: mimeType,
     },
   };
 
