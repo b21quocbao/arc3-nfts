@@ -3,6 +3,7 @@ import { useState } from "react";
 import { getAlgodClient } from "../clients";
 import Button from "./Button";
 import axios from "axios";
+import { pinImageFile, signAndSubmit, getCreateNftTxn } from "../algorand";
 
 const network = process.env.NEXT_PUBLIC_NETWORK || "SandNet";
 const algod = getAlgodClient(network);
@@ -12,6 +13,7 @@ export default function TransferNFTForm() {
   const [assetFile, setAssetFile] = useState(null);
   const [txnref, setTxnRef] = useState("");
   const [txnUrl, setTxnUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const getTxnRefUrl = (txId) => {
     if (network === "SandNet") {
@@ -36,19 +38,27 @@ export default function TransferNFTForm() {
 
     // write your code here to mint NFT
 
-    // Convert file to base64 before upload
-    let reader = new FileReader();
-    reader.readAsDataURL(assetFile);
-    reader.onload = async function () {
-      const res = await axios.post("/api/upload", {
-        asset: {
-          name: assetName,
-          description: desc,
-        },
-        image: reader.result
-      });
-      console.log(res);
-    };
+    setIsLoading(true);
+
+    // call backend to pin image file and metadata
+    const preparedAsset = await pinImageFile(assetName, desc, assetFile);
+    
+    // deploy asset
+    const createNftTxn = await getCreateNftTxn(
+      algod,
+      activeAddress,
+      assetName,
+      false,
+      "ACSNFT",
+      preparedAsset.url
+    );
+    console.log("Create NFT Transaction: ", createNftTxn);
+
+    // sign and submit atomic transactions
+    const res = await signAndSubmit(signTransactions, sendTransactions, [createNftTxn]);
+    console.log("Submitted tx result: ", res);
+
+    setIsLoading(false);
   };
 
   return (
@@ -79,7 +89,7 @@ export default function TransferNFTForm() {
           </label>
           <input type="file" id="file-upload" accept="image/*" onChange={handleFileChange} required />
         </div>
-        <Button label="Mint NFT" type="submit" />
+        <Button isLoading={isLoading} disabled={isLoading} label="Mint NFT" type="submit" />
       </form>
     </div>
   );
