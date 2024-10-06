@@ -6,6 +6,8 @@
 - Name: Ngo Quoc Bao
 - Student ID: G2404379H
 
+### Live URL for testnet: https://arc3-nfts.vercel.app
+
 In this assessment, you are required to create a Dapp that allows users to mint their own NFT by paying a fee with your token:
 
 ### Part 1: Create and transfer fungible tokens
@@ -56,5 +58,5 @@ Run `yarn install`
 ### 4. Deploying tokens and NFTs
 Run `yarn tsx scripts/deployTokens.js`
 
-### 8. Run the Dapp
+### 5. Run the Dapp
 Run `yarn dev`
