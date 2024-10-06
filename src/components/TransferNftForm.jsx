@@ -20,7 +20,7 @@ export default function TransferNFTForm() {
     if (network === "SandNet") {
       return `https://app.dappflow.org/explorer/transaction/${txId}`;
     } else if (network === "TestNet") {
-      return `https://testnet.algoexplorer.io/tx/${txId}`;
+      return `https://lora.algokit.io/testnet/transaction/${txId}`;
     }
 
     return "";
