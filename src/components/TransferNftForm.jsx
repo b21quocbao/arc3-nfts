@@ -51,7 +51,7 @@ export default function TransferNFTForm() {
     // call backend to pin image file and metadata
     const preparedAsset = await pinImageFile(assetName, desc, assetFile);
     
-    // deploy asset
+    // deploy nft asset
     const createNftTxn = await getCreateNftTxn(
       algod,
       activeAddress,
@@ -62,6 +62,7 @@ export default function TransferNFTForm() {
     );
     console.log("Create NFT Transaction: ", createNftTxn);
 
+    // transfer fungible tokens to deployer
     const xferTxn = await getTransferFungibleTxn(
       algod,
       activeAddress,
@@ -73,8 +74,11 @@ export default function TransferNFTForm() {
     console.log("Transfer Fungible Transaction: ", xferTxn);
 
     // sign and submit atomic transactions
-    const res = await signAndSubmit(signTransactions, sendTransactions, [createNftTxn, xferTxn]);
-    console.log("Submitted tx result: ", res);
+    const response = await signAndSubmit(signTransactions, sendTransactions, [createNftTxn, xferTxn]);
+    console.log("Submitted tx result: ", response);
+    setTxnRef(response.txId);
+    const txnUrl = getTxnRefUrl(response.txId);
+    setTxnUrl(txnUrl);
 
     setIsLoading(false);
   };
