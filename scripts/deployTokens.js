@@ -44,8 +44,8 @@ const submitToNetwork = async (signedTxn) => {
     defaultFrozen: false,
     unitName: 'fut',
     assetName: 'Fungible Token',
-    total: 1000, // initial supply of 1000 fungible tokens
-    decimals: 18,
+    total: 1000 * 10**6, // initial supply of 1000 fungible tokens
+    decimals: 6,
   });
 
   const signedTxn = txn.signTxn(deployer.sk);
@@ -75,7 +75,7 @@ const submitToNetwork = async (signedTxn) => {
     to: buyer.addr,
     suggestedParams,
     assetIndex,
-    amount: 100,
+    amount: 100 * 10**6,
   });
   
   const signedXferTxn = xferTxn.signTxn(deployer.sk);

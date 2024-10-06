@@ -42,10 +42,10 @@ export default async function handler(req, res) {
   const metadata = {
     name: asset.name,
     description: asset.description,
-    image: `ipfs://${result.IpfsHash}/image`, // update url here for windows users
+    image: `ipfs://${result.IpfsHash}`,
     image_mimetype: mimeType,
     properties: {
-      file_url: `https://gateway.pinata.cloud/ipfs/${result.IpfsHash}/image`, // update url here for windows users
+      file_url: `https://gateway.pinata.cloud/ipfs/${result.IpfsHash}`,
       file_url_mimetype: mimeType,
     },
   };

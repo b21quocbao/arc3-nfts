@@ -58,4 +58,41 @@ const getCreateNftTxn = async (algodClient, from, assetName, defaultFrozen, unit
   });
 };
 
-export { pinImageFile, getCreateNftTxn, signAndSubmit };
+const getTransferFungibleTxn = async (algodClient, from, to, assetIndex, amount) => {
+  const suggestedParams = await algodClient.getTransactionParams().do();
+
+  // txn to create a pure nft
+  return algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+    from,
+    to,
+    suggestedParams,
+    assetIndex,
+    amount,
+  });
+};
+
+const fetchFungibleToken = async (algodClient, minterAddr) => {
+  const { assets } = await algodClient.accountInformation(minterAddr).do();
+
+  let nfts = [];
+  if (assets) {
+    for (let asset of assets) {
+      const assetInfo = await algodClient.getAssetByID(asset["asset-id"]).do();
+      const { decimals, name } = assetInfo.params;
+
+      // Get fungible token created in deployToken.js
+      const isFungible = name == "Fungible Token" && decimals === 6;
+
+      // Check if minter holds more than 5 tokens
+      const enoughAmount = asset.amount >= 5 * 10**6;
+
+      if (isFungible && enoughAmount) {
+        return asset["asset-id"];
+      }
+    }
+  }
+
+  return nfts;
+};
+
+export { pinImageFile, getCreateNftTxn, getTransferFungibleTxn, signAndSubmit, fetchFungibleToken };

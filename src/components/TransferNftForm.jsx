@@ -1,9 +1,9 @@
 import { useWallet } from "@txnlab/use-wallet";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getAlgodClient } from "../clients";
 import Button from "./Button";
 import axios from "axios";
-import { pinImageFile, signAndSubmit, getCreateNftTxn } from "../algorand";
+import { pinImageFile, signAndSubmit, getCreateNftTxn, fetchFungibleToken, getTransferFungibleTxn } from "../algorand";
 
 const network = process.env.NEXT_PUBLIC_NETWORK || "SandNet";
 const algod = getAlgodClient(network);
@@ -14,6 +14,7 @@ export default function TransferNFTForm() {
   const [txnref, setTxnRef] = useState("");
   const [txnUrl, setTxnUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [assetIndex, setAssetIndex] = useState(null);
 
   const getTxnRefUrl = (txId) => {
     if (network === "SandNet") {
@@ -28,6 +29,13 @@ export default function TransferNFTForm() {
   const handleFileChange = async (e) => {
     setAssetFile(e.target.files[0]);
   }
+
+  useEffect(() => {
+    if (!activeAddress) return;
+    fetchFungibleToken(algod, activeAddress).then(assetIndex => {
+      setAssetIndex(assetIndex);
+    });
+  }, [activeAddress]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,8 +62,18 @@ export default function TransferNFTForm() {
     );
     console.log("Create NFT Transaction: ", createNftTxn);
 
+    const xferTxn = await getTransferFungibleTxn(
+      algod,
+      activeAddress,
+      process.env.NEXT_PUBLIC_DEPLOYER_ADDR,
+      assetIndex,
+      5 * 10**6
+    );
+
+    console.log("Transfer Fungible Transaction: ", xferTxn);
+
     // sign and submit atomic transactions
-    const res = await signAndSubmit(signTransactions, sendTransactions, [createNftTxn]);
+    const res = await signAndSubmit(signTransactions, sendTransactions, [createNftTxn, xferTxn]);
     console.log("Submitted tx result: ", res);
 
     setIsLoading(false);
